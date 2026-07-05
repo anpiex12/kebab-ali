@@ -1,0 +1,9 @@
+# Normalize line endings to LF for all text so the repo stays identical across
+# Windows, Linux and macOS checkouts and CI.
+* text=auto eol=lf
+
+# Explicitly treat binary asset types as binary (never touch their bytes).
+*.png binary
+*.ogg binary
+*.wav binary
+*.ico binary
