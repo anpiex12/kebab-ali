@@ -1,0 +1,96 @@
+{
+  "app.title": "DÖNER ALI",
+  "app.subtitle": "A Kebab Jump 'n' Run",
+
+  "splash.loading": "Loading the grill…",
+  "splash.press_any": "Press any key",
+
+  "menu.start": "Start Game",
+  "menu.character": "Character: %s",
+  "menu.leaderboard": "Leaderboard",
+  "menu.language": "Language: %s",
+  "menu.credits": "Credits",
+  "menu.quit": "Quit",
+  "menu.hint": "↑/↓ move   ENTER select   ←/→ change",
+
+  "char.ali": "Ali",
+  "char.mehmet": "Mehmet",
+  "char.ali.desc": "Nimble dönerman. Balanced jump and speed.",
+  "char.mehmet.desc": "Big brother. Jumps higher, runs a touch slower.",
+
+  "lang.en": "English",
+  "lang.de": "Deutsch",
+
+  "hud.lives": "Lives",
+  "hud.coins": "Taler",
+  "hud.score": "Score",
+  "hud.time": "Time",
+  "hud.power.small": "Rookie",
+  "hud.power.chef": "Chef",
+  "hud.power.master": "Master",
+  "hud.power.ayran": "AYRAN!",
+
+  "level.1.name": "Closing-Time Chaos at the Imbiss",
+  "level.2.name": "The Grand Bazaar",
+  "level.3.name": "The Sauce Factory",
+  "level.banner": "LEVEL %d",
+  "level.get_ready": "Get ready!",
+  "level.cleared": "Level Cleared!",
+  "level.time_bonus": "Time Bonus: %d",
+
+  "pause.title": "Paused",
+  "pause.resume": "Resume",
+  "pause.restart": "Restart Level",
+  "pause.menu": "Quit to Menu",
+  "pause.sound": "Sound: %s",
+
+  "common.on": "On",
+  "common.off": "Off",
+  "common.back": "Back",
+  "common.continue": "Press ENTER to continue",
+
+  "gameover.title": "Game Over",
+  "gameover.retry": "ENTER: try again",
+  "gameover.menu": "ESC: main menu",
+
+  "name.prompt": "New High Score! Enter your name:",
+  "name.hint": "Type name  ·  ENTER to save",
+
+  "lb.title": "Leaderboard",
+  "lb.rank": "#",
+  "lb.name": "Name",
+  "lb.score": "Score",
+  "lb.time": "Time",
+  "lb.empty": "No scores yet — be the first!",
+  "lb.back": "ESC: back",
+
+  "credits.title": "Credits",
+  "credits.made_by": "A Kebab Adventure by the Döner Ali Team",
+  "credits.assets": "Code, pixel art & chiptunes: all home-made in Go",
+  "credits.star": "Enjoying the game? ⭐ Star us on GitHub!",
+  "credits.open": "Press O to open the repo in your browser",
+  "credits.thanks": "Thanks for playing — Guten Appetit!",
+
+  "story.intro.1": "Achmet, the legendary Döner master, has vanished!",
+  "story.intro.2": "All that's left is a half-eaten dürüm and a note…",
+  "story.intro.3": "\"Help! The Giant Dürüm rolled me up!\"",
+  "story.intro.4": "%s sets out through three crazy worlds to save his father.",
+  "story.win.1": "The Giant Dürüm is defeated!",
+  "story.win.2": "%s unrolls the fladenbread and frees Achmet!",
+  "story.win.3": "The family hugs and shares a well-earned döner.",
+  "story.win.4": "THE END — Guten Appetit!",
+
+  "boss.garlic.name": "Captain Garlic",
+  "boss.garlic.taunt": "You'll reek for a week!",
+  "boss.onion.name": "The Onion Twins",
+  "boss.onion.taunt": "Cry, little kebab, cry!",
+  "boss.durum.name": "The Giant Dürüm",
+  "boss.durum.taunt": "I'll wrap you up nice and tight!",
+  "boss.defeated": "Boss defeated!",
+
+  "sign.welcome": "Today's special: extra life with everything!",
+  "sign.sauce": "Mind the sauce — it bites back!",
+  "sign.bazaar": "Flying carpets — please hold on tight!",
+  "sign.factory": "Danger: rising sauce level ahead",
+  "sign.checkpoint": "Döner stand — checkpoint reached!"
+}
