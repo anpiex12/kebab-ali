@@ -16,6 +16,11 @@ import (
 	"strings"
 )
 
+// hasVerb reports whether s contains a printf-style verb, so T only formats
+// strings that actually expect arguments (mixing plain and templated messages
+// then never yields spurious %!(EXTRA ...) output).
+func hasVerb(s string) bool { return strings.Contains(s, "%") }
+
 // DefaultLang is the base language every lookup falls back to.
 const DefaultLang = "en"
 
@@ -114,7 +119,7 @@ func (c *Catalog) T(key string, args ...any) string {
 			s = key
 		}
 	}
-	if len(args) > 0 {
+	if len(args) > 0 && hasVerb(s) {
 		return fmt.Sprintf(s, args...)
 	}
 	return s

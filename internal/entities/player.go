@@ -1,6 +1,10 @@
 package entities
 
-import "github.com/anpiex12/kebab-ali/internal/physics"
+import (
+	"math"
+
+	"github.com/anpiex12/kebab-ali/internal/physics"
+)
 
 // CharKind selects which brother is being played, which only changes a few
 // movement stats and (in the renderer) the apron colour.
@@ -63,11 +67,15 @@ type Input struct {
 }
 
 // Events reports notable things that happened during an Update so the game can
-// react (play a sound, spawn a projectile).
+// react (play a sound, spawn a projectile, pop a "?" block).
 type Events struct {
 	Jumped bool
 	Landed bool
 	Threw  bool
+	// Bonked is set when the player's head hit a solid tile from below; BonkTX
+	// and BonkTY are that tile's grid coordinates (used to pop "?"/bread blocks).
+	Bonked         bool
+	BonkTX, BonkTY int
 }
 
 // Player is the controllable character.
@@ -224,6 +232,13 @@ func (p *Player) Update(in Input, w World) Events {
 				ev.Landed = true
 			}
 			p.onGround = true
+		} else if p.VY < 0 {
+			// Head bonk: report the tile above the head centre so the game can
+			// pop a "?" block or shatter a bread block.
+			tsf := float64(ts)
+			ev.Bonked = true
+			ev.BonkTX = int(math.Floor(p.Body.CenterX() / tsf))
+			ev.BonkTY = int(math.Floor((p.Body.Y - 1) / tsf))
 		}
 		p.VY = 0
 	} else {

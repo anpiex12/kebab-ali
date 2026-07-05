@@ -98,6 +98,9 @@ func Darken(c color.RGBA, t float64) color.RGBA {
 	return blend(c, color.RGBA{0, 0, 0, c.A}, t)
 }
 
+// Blend linearly interpolates between colours a and b by t in [0,1].
+func Blend(a, b color.RGBA, t float64) color.RGBA { return blend(a, b, t) }
+
 func blend(a, b color.RGBA, t float64) color.RGBA {
 	if t < 0 {
 		t = 0

@@ -57,6 +57,14 @@ func TestTWithArgs(t *testing.T) {
 	}
 }
 
+func TestTIgnoresArgsWithoutVerb(t *testing.T) {
+	c, _ := Load(testFS(), "lang")
+	// "hello" has no %-verb; passing args must not append %!(EXTRA ...).
+	if got := c.T("hello", "unused"); got != "Hello" {
+		t.Fatalf("args on a plain string leaked: %q", got)
+	}
+}
+
 func TestSetUnknownLanguageIsIgnored(t *testing.T) {
 	c, _ := Load(testFS(), "lang")
 	c.SetLanguage("xx")
