@@ -10,6 +10,10 @@ const (
 	MeatSliceProj ProjectileKind = iota
 	// ChiliProj is fired by peperoni enemies and hurts the player.
 	ChiliProj
+	// GarlicProj is Captain Garlic's floaty stink cloud.
+	GarlicProj
+	// RingProj is a thrown onion ring (arcs through the air).
+	RingProj
 )
 
 // Projectile tuning.
@@ -54,6 +58,35 @@ func NewChili(x, y, dir float64) *Projectile {
 	}
 }
 
+// NewGarlicCloud spawns a slow, gently rising stink cloud toward dir.
+func NewGarlicCloud(x, y, dir float64) *Projectile {
+	return &Projectile{
+		Kind:  GarlicProj,
+		Body:  physics.Rect{X: x, Y: y, W: 10, H: 10},
+		VX:    1.1 * sign(dir),
+		VY:    -0.4,
+		life:  200,
+		alive: true,
+	}
+}
+
+// NewOnionRing spawns an arcing onion ring toward dir.
+func NewOnionRing(x, y, dir float64) *Projectile {
+	return &Projectile{
+		Kind:  RingProj,
+		Body:  physics.Rect{X: x, Y: y, W: 10, H: 8},
+		VX:    2.0 * sign(dir),
+		VY:    -3.4,
+		life:  200,
+		alive: true,
+	}
+}
+
+// arcs reports whether this projectile kind is affected by gravity.
+func (pr *Projectile) arcs() bool {
+	return pr.Kind == MeatSliceProj || pr.Kind == RingProj
+}
+
 // Alive reports whether the projectile is still active.
 func (pr *Projectile) Alive() bool { return pr.alive }
 
@@ -84,17 +117,21 @@ func (pr *Projectile) Update(w World) {
 		pr.alive = false // both kinds die against a wall
 		return
 	}
-	if pr.Kind == MeatSliceProj {
+	switch {
+	case pr.arcs():
 		pr.VY += meatGravity
 		var groundHit bool
 		pr.Body, groundHit = physics.ResolveY(pr.Body, pr.VY, ts, w.Solid)
 		if groundHit {
-			if pr.VY > 0 {
-				pr.VY = meatBounce // bounce back up
+			if pr.Kind == MeatSliceProj && pr.VY > 0 {
+				pr.VY = meatBounce // meat slices bounce
 			} else {
-				pr.VY = 0
+				pr.alive = false // onion rings splat on the floor
 			}
 		}
+	case pr.Kind == GarlicProj:
+		// A floaty cloud that drifts and ignores terrain.
+		pr.Body.Y += pr.VY
 	}
 }
 
