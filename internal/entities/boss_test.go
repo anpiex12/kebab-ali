@@ -120,24 +120,17 @@ func TestDurumCanBeDefeated(t *testing.T) {
 	}
 }
 
-func TestBossHarmlessDuringPostStompFlash(t *testing.T) {
-	// Regression: stomping a boss that survives must not let the lingering
-	// body overlap (while the player bounces upward) count as a side hit and
-	// cost a life. During the post-hit flash the body deals no contact damage.
-	w := &testWorld{solids: map[[2]int]bool{}, ts: 16, groundTy: 13}
+func TestStompBossBodiesAreHarmless(t *testing.T) {
+	// Captain Garlic and the Onion Twins are defeated by stomping; their bodies
+	// deal no contact damage (their threat is the projectiles they throw), so
+	// approaching or bouncing off them can never cost the player a life.
 	for _, b := range []Boss{NewGarlicBoss(200, 192), NewOnionTwins(200, 192)[0]} {
-		if b.Contact() != ContactHurt {
-			t.Fatalf("%s body should hurt before being hit", b.Kind())
+		if b.Contact() != ContactNone {
+			t.Fatalf("%s body should be harmless (ContactNone), got %v", b.Kind(), b.Contact())
 		}
 		b.Stomp()
 		if b.Contact() != ContactNone {
-			t.Fatalf("%s must be harmless right after a stomp", b.Kind())
-		}
-		for i := 0; i < 45; i++ {
-			b.Update(w)
-		}
-		if b.Contact() != ContactHurt {
-			t.Fatalf("%s should hurt again once the flash ends", b.Kind())
+			t.Fatalf("%s body should stay harmless after a stomp", b.Kind())
 		}
 	}
 }

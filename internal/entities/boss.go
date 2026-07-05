@@ -78,17 +78,6 @@ func (b *bossBase) tickTimers() {
 	}
 }
 
-// hurtUnlessFlashing gives ContactHurt normally but ContactNone during the
-// post-hit invulnerability flash. Without this, bouncing off a stomped (but
-// still living) boss whose tall body keeps overlapping the player for a few
-// upward frames would immediately count as a side hit and cost a life.
-func hurtUnlessFlashing(b *bossBase) ContactKind {
-	if b.hitCD > 0 {
-		return ContactNone
-	}
-	return ContactHurt
-}
-
 // gravityMove applies gravity and vertical collision, returning grounded state.
 func (b *bossBase) gravityMove(w World) bool {
 	b.vy += playerGravity
@@ -159,7 +148,11 @@ func NewGarlicBoss(x, y float64) Boss {
 }
 
 func (g *garlicBoss) Stompable() bool     { return true }
-func (g *garlicBoss) Contact() ContactKind { return hurtUnlessFlashing(&g.bossBase) }
+// Contact is harmless: Captain Garlic is defeated purely by stomping his head,
+// and his danger is the stink clouds he lobs. Making the body itself hurt used
+// to punish simply walking up to him (a grounded overlap at his base counted as
+// a side hit), which felt like a bug.
+func (g *garlicBoss) Contact() ContactKind { return ContactNone }
 func (g *garlicBoss) Stomp()              { g.hurt() }
 func (g *garlicBoss) HitByProjectile()    { g.hurt() }
 
@@ -224,7 +217,9 @@ func newOnion(x, y float64) *onionBoss {
 }
 
 func (o *onionBoss) Stompable() bool      { return true }
-func (o *onionBoss) Contact() ContactKind { return hurtUnlessFlashing(&o.bossBase) }
+// Contact is harmless for the same reason as Captain Garlic: the Onion Twins'
+// threat is the rings they throw, and they are beaten by stomping.
+func (o *onionBoss) Contact() ContactKind { return ContactNone }
 func (o *onionBoss) HitByProjectile()     { o.damage() }
 
 func (o *onionBoss) Stomp() { o.damage() }
