@@ -21,14 +21,16 @@ jobs:
           cache: true
 
       # Ebitengine needs OpenGL, X11 and ALSA development headers to compile on
-      # Linux (it uses cgo there).
+      # Linux (it uses cgo there). Xvfb + the Mesa software renderer give the
+      # test binaries a virtual display, since importing Ebitengine initialises
+      # GLFW at package load and would otherwise panic on the headless runner.
       - name: Install Ebitengine build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libgl1-mesa-dev xorg-dev libasound2-dev \
+            libgl1-mesa-dev libgl1-mesa-dri xorg-dev libasound2-dev \
             libxi-dev libxcursor-dev libxinerama-dev libxrandr-dev libxxf86vm-dev \
-            pkg-config
+            xvfb pkg-config
 
       - name: go vet
         run: go vet ./...
@@ -40,7 +42,7 @@ jobs:
           "$(go env GOPATH)/bin/golangci-lint" run ./...
 
       - name: Test (race + coverage)
-        run: go test ./... -race -cover
+        run: xvfb-run -a go test ./... -race -cover
 
   # Prove the game compiles natively on every target OS — a stronger check than a
   # single-host cross-compile, since Ebitengine links against each platform's
