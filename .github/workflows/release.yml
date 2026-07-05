@@ -70,11 +70,17 @@ jobs:
           go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" \
             -o "dist/${{ matrix.binary }}" .
 
+      # Portable SHA-256: sha256sum exists on Linux and in Git Bash on Windows;
+      # macOS ships shasum instead. Pick whichever is present.
       - name: Checksum
         shell: bash
         run: |
           cd dist
-          shasum -a 256 "${{ matrix.binary }}" > "${{ matrix.binary }}.sha256"
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "${{ matrix.binary }}" > "${{ matrix.binary }}.sha256"
+          else
+            shasum -a 256 "${{ matrix.binary }}" > "${{ matrix.binary }}.sha256"
+          fi
           cat "${{ matrix.binary }}.sha256"
 
       - uses: actions/upload-artifact@v4
