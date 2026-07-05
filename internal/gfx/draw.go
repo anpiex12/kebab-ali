@@ -16,7 +16,7 @@ func ToEbiten(src image.Image) *ebiten.Image {
 
 // FillRect draws a solid rectangle.
 func FillRect(dst *ebiten.Image, x, y, w, h float64, c color.Color) {
-	vector.DrawFilledRect(dst, float32(x), float32(y), float32(w), float32(h), c, false)
+	vector.FillRect(dst, float32(x), float32(y), float32(w), float32(h), c, false)
 }
 
 // StrokeRect draws a rectangle outline of the given thickness.
@@ -26,7 +26,7 @@ func StrokeRect(dst *ebiten.Image, x, y, w, h, thick float64, c color.Color) {
 
 // FillCircle draws a solid (anti-aliased) circle centred at (cx,cy).
 func FillCircle(dst *ebiten.Image, cx, cy, r float64, c color.Color) {
-	vector.DrawFilledCircle(dst, float32(cx), float32(cy), float32(r), c, true)
+	vector.FillCircle(dst, float32(cx), float32(cy), float32(r), c, true)
 }
 
 // Line draws a straight line between two points.

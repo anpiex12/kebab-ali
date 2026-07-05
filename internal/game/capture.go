@@ -69,7 +69,7 @@ func saveCanvas(img *ebiten.Image, path string) {
 	if err != nil {
 		return
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	_ = png.Encode(f, rgba)
 }
 

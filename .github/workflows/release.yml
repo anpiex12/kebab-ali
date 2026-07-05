@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-amd64
+            os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            cgo: 1
+            binary: doener-ali-linux-amd64
+          - target: windows-amd64
+            os: windows-latest
+            goos: windows
+            goarch: amd64
+            cgo: 0
+            binary: doener-ali-windows-amd64.exe
+          - target: macos-amd64
+            os: macos-13
+            goos: darwin
+            goarch: amd64
+            cgo: 1
+            binary: doener-ali-macos-amd64
+          - target: macos-arm64
+            os: macos-latest
+            goos: darwin
+            goarch: arm64
+            cgo: 1
+            binary: doener-ali-macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+
+      - name: Install Ebitengine build dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev xorg-dev libasound2-dev \
+            libxi-dev libxcursor-dev libxinerama-dev libxrandr-dev libxxf86vm-dev \
+            pkg-config
+
+      # Build a stripped (-s -w), reproducible (-trimpath) binary with the tag
+      # embedded as the version, on the runner that matches the target so the
+      # native graphics/audio stack links correctly.
+      - name: Build
+        shell: bash
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: ${{ matrix.cgo }}
+        run: |
+          mkdir -p dist
+          go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" \
+            -o "dist/${{ matrix.binary }}" .
+
+      - name: Checksum
+        shell: bash
+        run: |
+          cd dist
+          shasum -a 256 "${{ matrix.binary }}" > "${{ matrix.binary }}.sha256"
+          cat "${{ matrix.binary }}.sha256"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: dist/*
+
+  release:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -R dist
+
+      - name: Create release and attach binaries + checksums
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**
+          generate_release_notes: true
+          fail_on_unmatched_files: true
