@@ -78,6 +78,17 @@ func (b *bossBase) tickTimers() {
 	}
 }
 
+// hurtUnlessFlashing gives ContactHurt normally but ContactNone during the
+// post-hit invulnerability flash. Without this, bouncing off a stomped (but
+// still living) boss whose tall body keeps overlapping the player for a few
+// upward frames would immediately count as a side hit and cost a life.
+func hurtUnlessFlashing(b *bossBase) ContactKind {
+	if b.hitCD > 0 {
+		return ContactNone
+	}
+	return ContactHurt
+}
+
 // gravityMove applies gravity and vertical collision, returning grounded state.
 func (b *bossBase) gravityMove(w World) bool {
 	b.vy += playerGravity
@@ -148,7 +159,7 @@ func NewGarlicBoss(x, y float64) Boss {
 }
 
 func (g *garlicBoss) Stompable() bool     { return true }
-func (g *garlicBoss) Contact() ContactKind { return ContactHurt }
+func (g *garlicBoss) Contact() ContactKind { return hurtUnlessFlashing(&g.bossBase) }
 func (g *garlicBoss) Stomp()              { g.hurt() }
 func (g *garlicBoss) HitByProjectile()    { g.hurt() }
 
@@ -213,7 +224,7 @@ func newOnion(x, y float64) *onionBoss {
 }
 
 func (o *onionBoss) Stompable() bool      { return true }
-func (o *onionBoss) Contact() ContactKind { return ContactHurt }
+func (o *onionBoss) Contact() ContactKind { return hurtUnlessFlashing(&o.bossBase) }
 func (o *onionBoss) HitByProjectile()     { o.damage() }
 
 func (o *onionBoss) Stomp() { o.damage() }
@@ -302,6 +313,9 @@ func (d *durumBoss) Phase() int {
 func (d *durumBoss) Stompable() bool { return d.state == durIdle }
 
 func (d *durumBoss) Contact() ContactKind {
+	if d.hitCD > 0 {
+		return ContactNone // harmless during the post-hit flash
+	}
 	switch d.state {
 	case durLunge:
 		return ContactEnroll

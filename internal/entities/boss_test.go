@@ -120,6 +120,28 @@ func TestDurumCanBeDefeated(t *testing.T) {
 	}
 }
 
+func TestBossHarmlessDuringPostStompFlash(t *testing.T) {
+	// Regression: stomping a boss that survives must not let the lingering
+	// body overlap (while the player bounces upward) count as a side hit and
+	// cost a life. During the post-hit flash the body deals no contact damage.
+	w := &testWorld{solids: map[[2]int]bool{}, ts: 16, groundTy: 13}
+	for _, b := range []Boss{NewGarlicBoss(200, 192), NewOnionTwins(200, 192)[0]} {
+		if b.Contact() != ContactHurt {
+			t.Fatalf("%s body should hurt before being hit", b.Kind())
+		}
+		b.Stomp()
+		if b.Contact() != ContactNone {
+			t.Fatalf("%s must be harmless right after a stomp", b.Kind())
+		}
+		for i := 0; i < 45; i++ {
+			b.Update(w)
+		}
+		if b.Contact() != ContactHurt {
+			t.Fatalf("%s should hurt again once the flash ends", b.Kind())
+		}
+	}
+}
+
 func TestNewBossesFactory(t *testing.T) {
 	if got := NewBosses("garlic", 100, 100); len(got) != 1 {
 		t.Errorf("garlic should yield 1 boss, got %d", len(got))
