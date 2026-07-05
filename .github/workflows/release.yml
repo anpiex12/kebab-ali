@@ -26,18 +26,6 @@ jobs:
             goarch: amd64
             cgo: 0
             binary: doener-ali-windows-amd64.exe
-          - target: macos-amd64
-            os: macos-13
-            goos: darwin
-            goarch: amd64
-            cgo: 1
-            binary: doener-ali-macos-amd64
-          - target: macos-arm64
-            os: macos-latest
-            goos: darwin
-            goarch: arm64
-            cgo: 1
-            binary: doener-ali-macos-arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

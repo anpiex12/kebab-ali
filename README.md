@@ -64,16 +64,11 @@ chmod +x doener-ali-linux-amd64
 ```
 
 ### macOS
-Pick `doener-ali-macos-arm64` (Apple Silicon) or `doener-ali-macos-amd64` (Intel).
-Because it isn't code-signed, macOS Gatekeeper will quarantine it — clear that once:
-```bash
-xattr -d com.apple.quarantine doener-ali-macos-arm64
-chmod +x doener-ali-macos-arm64
-./doener-ali-macos-arm64
-```
+No pre-built macOS binary is published — build it from source (see below). It
+runs great on both Apple Silicon and Intel Macs.
 
-Each release also ships a `*.sha256` checksum next to every binary so you can
-verify your download.
+Each release ships a `*.sha256` checksum next to every binary so you can verify
+your download.
 
 ## Build from source
 
